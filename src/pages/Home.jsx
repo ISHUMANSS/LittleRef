@@ -23,7 +23,7 @@ const SECTIONS = [
     disabled: false,
   },
   {
-    to: "/event/setup",
+    to: "/event",
     title: "Event Setup",
     description: "Configure event details and import teams.",
     disabled: false,
@@ -35,7 +35,7 @@ const HOW_TO_STEPS = [
     title: "Create or load an event",
     description:
       "Go to Event Setup and start a local event, optionally with sample teams for testing.",
-    to: "/event/setup",
+    to: "/event/",
   },
   {
     title: "Add your teams",
