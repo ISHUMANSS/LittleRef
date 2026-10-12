@@ -2,7 +2,7 @@ Need to do:
 
 
 Add:
-- 
+- Vex events API (will allow matches and loading teams for the event)
 
 Fix / change:
 -
@@ -10,5 +10,5 @@ Fix / change:
 
 
 Want to add:
-- Vex events API (will allow matches and loading teams for the event)
+- shareing between multiple refs on a network with a password
 - matches also has the calculator? so you never need to leave the app

@@ -71,7 +71,7 @@ function Home() {
       <div className="home">
         <h1>Little Ref</h1>
         <p className="home-subtitle">
-          Created to help referees keep track of voliations at local events. Please refer to the game manual actual rules
+          Created to help referees keep track of voliations at local events. Please refer to the game manual for actual rules
         </p>
 
         <div className="home-stats">
