@@ -3,7 +3,7 @@ import "./InspectionPanel.css";
 
 export default function InspectionPanel({ teamId, inspection, onSetInspection }) {
   const [note, setNote] = useState(inspection?.note || "");
-  // Collapsed whenever an inspection is already on record  pass or fail.
+  // Collapsed whenever an inspection is already on record — pass or fail.
   // Only stays expanded when the team hasn't been inspected yet.
   const [expanded, setExpanded] = useState(!inspection);
 
@@ -28,19 +28,25 @@ export default function InspectionPanel({ teamId, inspection, onSetInspection })
   if (inspection && !expanded) {
     return (
       <div className="inspection-panel inspection-panel-collapsed">
-        <span
-          className={`inspection-current inspection-summary ${
-            inspection.passed ? "inspection-current-pass" : "inspection-current-fail"
-          }`}
-        >
-          {inspection.passed ? "✓ Passed Inspection" : "✕ Failed Inspection"}
-          <span className="inspection-current-time">
-            {new Date(inspection.updatedAt).toLocaleString()}
+        <div className="inspection-collapsed-row">
+          <span
+            className={`inspection-current inspection-summary ${
+              inspection.passed ? "inspection-current-pass" : "inspection-current-fail"
+            }`}
+          >
+            {inspection.passed ? "✓ Passed Inspection" : "✕ Failed Inspection"}
+            <span className="inspection-current-time">
+              {new Date(inspection.updatedAt).toLocaleString()}
+            </span>
           </span>
-        </span>
-        <button className="inspection-reinspect-btn" onClick={() => setExpanded(true)}>
-          Re-inspect
-        </button>
+          <button className="inspection-reinspect-btn" onClick={() => setExpanded(true)}>
+            Re-inspect
+          </button>
+        </div>
+
+        {!inspection.passed && inspection.note && (
+          <p className="inspection-collapsed-note">{inspection.note}</p>
+        )}
       </div>
     );
   }

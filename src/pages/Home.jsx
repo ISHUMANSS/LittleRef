@@ -95,7 +95,7 @@ function Home() {
               >
                 <h3>{section.title}</h3>
                 <p>{section.description}</p>
-                <span className="home-card-badge">Coming soon</span>
+                <span className="home-card-badge">Coming at some point</span>
               </div>
             ) : (
               <Link key={section.to} to={section.to} className="home-card">

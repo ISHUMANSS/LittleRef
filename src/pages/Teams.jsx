@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useEventData } from "../context/EventDataContext";
 import { getRule } from "../utils/rules";
+import { groupByRule } from "../utils/violations";
 import Header from "../components/Header";
 import TeamCard from "../components/TeamCard";
 import ViolationModal from "../components/ViolationModal";
@@ -74,24 +75,6 @@ function TeamList() {
     </div>
   );
 }
-//groups a team's violations by ruleCode, most-recently-broken rule first,
-//within each group, most recent entry first.
-function groupByRule(violations) {
-  const groups = {};
-  violations.forEach((v) => {
-    if (!groups[v.ruleCode]) {
-      groups[v.ruleCode] = { ruleCode: v.ruleCode, entries: [] };
-    }
-    groups[v.ruleCode].entries.push(v);
-  });
-  return Object.values(groups)
-    .map((g) => ({
-      ...g,
-      entries: g.entries.sort((a, b) => b.timestamp - a.timestamp),
-      latestTimestamp: Math.max(...g.entries.map((e) => e.timestamp)),
-    }))
-    .sort((a, b) => b.latestTimestamp - a.latestTimestamp);
-}
 
 function TeamDetail({ teamNumber }) {
   const navigate = useNavigate();
@@ -104,6 +87,7 @@ function TeamDetail({ teamNumber }) {
     setInspection,
   } = useEventData();
   const [modalOpen, setModalOpen] = useState(false);
+  const [expandedRule, setExpandedRule] = useState(null);
 
   const team = teams.find((t) => t.number === teamNumber);
 
@@ -119,6 +103,7 @@ function TeamDetail({ teamNumber }) {
   const violations = violationsForTeam(team.id);
   const majorCount = violations.filter((v) => v.severity === "major").length;
   const minorCount = violations.filter((v) => v.severity === "minor").length;
+  const grouped = groupByRule(violations);
 
   function handleSelect(ruleCode, severity, note) {
     addViolation(team.id, ruleCode, severity, note);
@@ -160,40 +145,91 @@ function TeamDetail({ teamNumber }) {
           </button>
         </div>
 
-        {violations.length === 0 ? (
+        {grouped.length === 0 ? (
           <p className="detail-empty">No violations recorded.</p>
         ) : (
           <ul className="violation-list">
-            {violations.map((v) => {
-              const rule = getRule(v.ruleCode);
+            {grouped.map((group) => {
+              const rule = getRule(group.ruleCode);
+              const isExpanded = expandedRule === group.ruleCode;
+              const groupMinor = group.entries.filter(
+                (e) => e.severity === "minor"
+              ).length;
+              const groupMajor = group.entries.filter(
+                (e) => e.severity === "major"
+              ).length;
+
               return (
-                <li key={v.id} className="violation-list-item">
-                  <span
-                    className="badge"
-                    style={{ background: rule?.color || "#999" }}
-                  >
-                    {v.ruleCode}
-                  </span>
-                  <span className={`severity-tag severity-tag-${v.severity}`}>
-                    {v.severity}
-                  </span>
-                  <span className="violation-note-wrap">
-                    {v.note ? (
-                      <span className="violation-note">{v.note}</span>
-                    ) : (
-                      <span className="violation-note-empty">—</span>
-                    )}
-                  </span>
-                  <span className="violation-time">
-                    {new Date(v.timestamp).toLocaleTimeString()}
-                  </span>
+                <li key={group.ruleCode} className="violation-group">
                   <button
-                    className="violation-remove"
-                    onClick={() => removeViolation(v.id)}
-                    aria-label="Remove violation"
+                    className="violation-group-header"
+                    onClick={() =>
+                      setExpandedRule(isExpanded ? null : group.ruleCode)
+                    }
                   >
-                    ✕
+                    <span
+                      className="badge"
+                      style={{ background: rule?.color || "#999" }}
+                    >
+                      {group.ruleCode}
+                    </span>
+
+                    {group.entries.length > 1 && (
+                      <span className="violation-count">
+                        ×{group.entries.length}
+                      </span>
+                    )}
+
+                    <span className="violation-group-breakdown">
+                      {groupMinor > 0 && (
+                        <span className="severity-tag severity-tag-minor">
+                          {groupMinor} minor
+                        </span>
+                      )}
+                      {groupMajor > 0 && (
+                        <span className="severity-tag severity-tag-major">
+                          {groupMajor} major
+                        </span>
+                      )}
+                    </span>
+
+                    <span className="violation-time">
+                      latest {new Date(group.latestTimestamp).toLocaleTimeString()}
+                    </span>
+
+                    <span className="violation-expand-arrow">
+                      {isExpanded ? "▲" : "▼"}
+                    </span>
                   </button>
+
+                  {isExpanded && (
+                    <ul className="violation-entry-list">
+                      {group.entries.map((v) => (
+                        <li key={v.id} className="violation-entry">
+                          <span
+                            className={`severity-tag severity-tag-${v.severity}`}
+                          >
+                            {v.severity}
+                          </span>
+                          {v.note ? (
+                            <span className="violation-note">{v.note}</span>
+                          ) : (
+                            <span className="violation-note-empty">—</span>
+                          )}
+                          <span className="violation-time">
+                            {new Date(v.timestamp).toLocaleTimeString()}
+                          </span>
+                          <button
+                            className="violation-remove"
+                            onClick={() => removeViolation(v.id)}
+                            aria-label="Remove violation"
+                          >
+                            ✕
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </li>
               );
             })}

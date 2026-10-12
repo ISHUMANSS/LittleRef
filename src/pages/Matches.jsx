@@ -8,7 +8,7 @@ function Matches() {
       <Header />
       <h1>VEX Ref</h1>
       <p>Referee tools for VEX Robotics competitions.</p>
-      <h1>Currently not working</h1>
+      <h1>Currently not working need to add vex api for matches to work</h1>
     </main>
   );
 }

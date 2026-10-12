@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import { useEventData } from "../context/EventDataContext";
@@ -36,15 +36,31 @@ function EventSetup() {
 function CreateEventPanel({ createEvent }) {
   const [name, setName] = useState("");
   const [useSampleData, setUseSampleData] = useState(false);
+  const [toast, setToast] = useState(null);
+  const toastTimer = useRef(null);
+
+  // Clear any pending auto-dismiss timer on unmount
+  useEffect(() => {
+    return () => clearTimeout(toastTimer.current);
+  }, []);
+
+  function showToast(message) {
+    setToast(message);
+    clearTimeout(toastTimer.current);
+    toastTimer.current = setTimeout(() => setToast(null), 2800);
+  }
 
   function handleCreate(e) {
     e.preventDefault();
-    if (!name.trim()) return;
+    if (!name.trim()) {
+      showToast("Enter an event name before creating the event.");
+      return;
+    }
     createEvent(name, { useSampleData, source: "local" });
   }
 
   return (
-    <div className="setup-card">
+    <div className="setup-card setup-card-relative">
       <h2>Create an Event</h2>
 
       <form onSubmit={handleCreate}>
@@ -73,16 +89,21 @@ function CreateEventPanel({ createEvent }) {
       <div className="setup-divider" />
 
       <button className="setup-btn setup-btn-disabled" disabled>
-        Load Event from VEX API (requires internet — coming soon)
+        Load Event from VEX API (requires internet coming at some point)
       </button>
       <p className="setup-hint">
         Local events store everything on this device only. Nothing is sent
         anywhere.
       </p>
+
+      {toast && (
+        <div className="toast toast-error" role="alert">
+          {toast}
+        </div>
+      )}
     </div>
   );
 }
-
 
 function ActiveEventPanel({ event, teams, addTeam, removeTeam, clearEvent, navigate }) {
   const { inspectionForTeam, setInspection } = useEventData();

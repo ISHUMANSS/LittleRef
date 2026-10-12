@@ -2,10 +2,10 @@ Need to do:
 
 
 Add:
-- teams page ui improvement
+- 
 
 Fix / change:
-- Phone screen based
+-
 
 
 

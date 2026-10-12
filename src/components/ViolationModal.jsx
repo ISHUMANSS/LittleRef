@@ -1,13 +1,39 @@
-import { useState } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { RULE_CATEGORIES } from "../utils/rules";
+import { useEventData } from "../context/EventDataContext";
 import "./ViolationModal.css";
 
 export default function ViolationModal({ team, onSelect, onClose }) {
+  const { violationsForTeam } = useEventData();
   const [search, setSearch] = useState("");
   const [expandedCode, setExpandedCode] = useState(null); // rule code, or "OTHER"
   const [note, setNote] = useState("");
   const [customCode, setCustomCode] = useState("");
   const [customDescription, setCustomDescription] = useState("");
+
+  const itemRefs = useRef({}); // code -> DOM node for the rule-item wrapper
+
+  // Whenever a rule expands, bring it to the center of the scrollable list
+  // so the severity buttons land somewhere reachable without manual scrolling.
+  useEffect(() => {
+    if (!expandedCode) return;
+    const node = itemRefs.current[expandedCode];
+    if (node) {
+      requestAnimationFrame(() => {
+        node.scrollIntoView({ behavior: "smooth", block: "center" });
+      });
+    }
+  }, [expandedCode]);
+
+  // How many times this team has already been called for each rule code.
+  const countsByCode = useMemo(() => {
+    if (!team) return {};
+    const counts = {};
+    violationsForTeam(team.id).forEach((v) => {
+      counts[v.ruleCode] = (counts[v.ruleCode] || 0) + 1;
+    });
+    return counts;
+  }, [team, violationsForTeam]);
 
   if (!team) return null;
 
@@ -26,6 +52,10 @@ export default function ViolationModal({ team, onSelect, onClose }) {
     }))
     .filter((cat) => cat.rules.length > 0);
 
+  const customMatchCount = customCode.trim()
+    ? countsByCode[customCode.trim()] || 0
+    : 0;
+
   function toggleExpand(code) {
     setExpandedCode(expandedCode === code ? null : code);
     setNote("");
@@ -43,9 +73,7 @@ export default function ViolationModal({ team, onSelect, onClose }) {
   return (
     <div className="modal-backdrop" onClick={onClose}>
       <div className="modal" onClick={(e) => e.stopPropagation()}>
-        <h2>
-          Assign Violation — {team.number} {team.name}
-        </h2>
+        <h2>Assign Violation: {team.number}</h2>
 
         <input
           className="modal-search"
@@ -68,8 +96,15 @@ export default function ViolationModal({ team, onSelect, onClose }) {
               <div className="rule-chip-column">
                 {cat.rules.map((r) => {
                   const isExpanded = expandedCode === r.code;
+                  const priorCount = countsByCode[r.code] || 0;
                   return (
-                    <div key={r.code} className="rule-item">
+                    <div
+                      key={r.code}
+                      className="rule-item"
+                      ref={(el) => {
+                        itemRefs.current[r.code] = el;
+                      }}
+                    >
                       <button
                         className="rule-chip-row-btn"
                         style={{ borderColor: cat.color }}
@@ -84,6 +119,11 @@ export default function ViolationModal({ team, onSelect, onClose }) {
                         <span className="rule-chip-short" style={{ color: cat.color }}>
                           {r.shortTitle || r.title}
                         </span>
+                        {priorCount > 0 && (
+                          <span className="rule-chip-prior-count">
+                            ×{priorCount}
+                          </span>
+                        )}
                         <span className="rule-chip-arrow">
                           {isExpanded ? "▲" : "▼"}
                         </span>
@@ -94,6 +134,14 @@ export default function ViolationModal({ team, onSelect, onClose }) {
                           <p className="rule-detail-title">{r.title}</p>
                           {r.description && (
                             <p className="rule-detail-desc">{r.description}</p>
+                          )}
+
+                          {priorCount > 0 && (
+                            <p className="rule-detail-prior-count">
+                              {team.number} has already been called for{" "}
+                              {r.code} {priorCount}{" "}
+                              {priorCount === 1 ? "time" : "times"} this event.
+                            </p>
                           )}
 
                           <label className="setup-label">Note (optional)</label>
@@ -128,7 +176,7 @@ export default function ViolationModal({ team, onSelect, onClose }) {
             </div>
           ))}
 
-          {/*for all other rules not included in the list*/}
+          {/* for all other rules not included in the list */}
           {otherCategory && (
             <div className="rule-category">
               <div
@@ -137,7 +185,12 @@ export default function ViolationModal({ team, onSelect, onClose }) {
               >
                 {otherCategory.name}
               </div>
-              <div className="rule-item">
+              <div
+                className="rule-item"
+                ref={(el) => {
+                  itemRefs.current.OTHER = el;
+                }}
+              >
                 <button
                   className="rule-chip-row-btn"
                   style={{ borderColor: otherCategory.color }}
@@ -169,6 +222,14 @@ export default function ViolationModal({ team, onSelect, onClose }) {
                       onChange={(e) => setCustomCode(e.target.value)}
                       placeholder="e.g. R14 or a short label"
                     />
+
+                    {customMatchCount > 0 && (
+                      <p className="rule-detail-prior-count">
+                        {team.number} has already been called for "
+                        {customCode.trim()}" {customMatchCount}{" "}
+                        {customMatchCount === 1 ? "time" : "times"} this event.
+                      </p>
+                    )}
 
                     <label className="setup-label">What happened</label>
                     <textarea

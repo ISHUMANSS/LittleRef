@@ -228,3 +228,71 @@
   color: var(--text-faint);
   background: var(--bg-muted);
 }
+
+.violation-group {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.violation-group-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  font-size: 0.9rem;
+}
+
+.violation-group-header:hover {
+  background: var(--bg-muted);
+}
+
+.violation-count {
+  font-weight: 700;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+.violation-group-breakdown {
+  display: flex;
+  gap: 6px;
+}
+
+.violation-expand-arrow {
+  margin-left: auto;
+  color: var(--text-faint);
+  font-size: 0.7rem;
+}
+
+.violation-entry-list {
+  list-style: none;
+  padding: 8px 12px 10px 12px;
+  margin: 0;
+  background: var(--bg-muted);
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.violation-entry {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.85rem;
+}
+
+.violation-entry .violation-note {
+  flex: 1;
+}
+
+.violation-entry button {
+  margin-left: auto;
+}
