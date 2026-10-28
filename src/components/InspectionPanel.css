@@ -135,3 +135,8 @@
   cursor: pointer;
   font-size: 0.85rem;
 }
+
+.inspection-collapsed-note-pass {
+  color: var(--status-success-text);
+  background: var(--status-success-bg);
+}

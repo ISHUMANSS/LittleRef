@@ -14,7 +14,7 @@ export default function InspectionPanel({ teamId, inspection, onSetInspection })
   }, [teamId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   function markPassed() {
-    onSetInspection(teamId, true, "");
+    onSetInspection(teamId, true, note);
     setNote("");
     setExpanded(false);
   }
@@ -44,8 +44,16 @@ export default function InspectionPanel({ teamId, inspection, onSetInspection })
           </button>
         </div>
 
-        {!inspection.passed && inspection.note && (
-          <p className="inspection-collapsed-note">{inspection.note}</p>
+        {inspection.note && (
+          <p
+            className={
+              inspection.passed
+                ? "inspection-collapsed-note inspection-collapsed-note-pass"
+                : "inspection-collapsed-note"
+            }
+          >
+            {inspection.note}
+          </p>
         )}
       </div>
     );
@@ -71,7 +79,7 @@ export default function InspectionPanel({ teamId, inspection, onSetInspection })
       <textarea
         className="inspection-note-input"
         rows={2}
-        placeholder="Why did it fail..."
+        placeholder="Why did it fail, or any note worth keeping…"
         value={note}
         onChange={(e) => setNote(e.target.value)}
       />

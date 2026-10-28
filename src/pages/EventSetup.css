@@ -195,6 +195,10 @@
   z-index: 10;
 }
 
+.setup-team-row .inspected-badge {
+  margin-left: 12px;
+}
+
 .toast-error {
   background: var(--status-danger-strong);
   color: #fff;
