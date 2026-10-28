@@ -123,8 +123,7 @@ function Home() {
             ))}
           </ol>
           <p className="how-to-note">
-            Everything is stored on this device only — no internet connection
-            needed during an event.
+            Everything is stored on this device only
           </p>
         </section>
 

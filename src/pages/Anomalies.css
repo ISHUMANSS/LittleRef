@@ -3,9 +3,45 @@
   margin: 0 auto;
 }
 
+.anomalies-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.anomalies-header h1 {
+  margin: 0;
+}
+
 .anomalies-subtitle {
   color: var(--text-secondary);
-  margin-top: -8px;
+  margin: 4px 0 0;
+}
+
+.export-btn {
+  padding: 8px 16px;
+  border: 1px solid var(--color-primary);
+  background: var(--bg-surface);
+  color: var(--color-primary);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.export-btn:hover:not(:disabled) {
+  background: var(--color-primary);
+  color: var(--text-on-primary);
+}
+
+.export-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 .anomaly-list {
@@ -14,25 +50,43 @@
   gap: 8px;
 }
 
+.anomaly-item {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
 .anomaly-row {
+  width: 100%;
   display: flex;
   align-items: center;
   gap: 10px;
-  border: 1px solid var(--border);
   background: var(--bg-surface);
-  border-radius: 8px;
+  color: var(--text-primary);
+  border: none;
+  border-radius: 0;
   padding: 10px 14px;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+.anomaly-row:hover {
+  background: var(--bg-muted);
 }
 
 .anomaly-rank {
   color: var(--text-faint);
   font-weight: 700;
   width: 28px;
+  flex-shrink: 0;
 }
 
 .anomaly-badge {
   min-width: 40px;
   text-align: center;
+  flex-shrink: 0;
 }
 
 .anomaly-title {
@@ -44,9 +98,109 @@
 .anomaly-breakdown {
   display: flex;
   gap: 6px;
+  flex-shrink: 0;
 }
 
 .anomaly-count {
   font-weight: 700;
   color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.anomaly-arrow {
+  color: var(--text-faint);
+  font-size: 0.7rem;
+  flex-shrink: 0;
+}
+
+.anomaly-detail {
+  list-style: none;
+  margin: 0;
+  padding: 6px 14px 10px;
+  background: var(--bg-muted);
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.anomaly-detail-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.85rem;
+  padding: 4px 0;
+}
+
+.anomaly-detail-team {
+  color: var(--color-primary);
+  text-decoration: none;
+  font-weight: 600;
+  font-family: "SF Mono", "Roboto Mono", ui-monospace, Menlo, monospace;
+}
+
+.anomaly-detail-team:hover {
+  text-decoration: underline;
+}
+
+.anomaly-detail-team-name {
+  color: var(--text-secondary);
+  font-weight: 400;
+  font-family: inherit;
+}
+
+.anomaly-detail-tags {
+  display: flex;
+  gap: 6px;
+}
+
+.anomaly-detail-count {
+  margin-left: auto;
+  font-weight: 700;
+  color: var(--text-primary);
+  flex-shrink: 0;
+}
+
+.anomalies-page-relative {
+  position: relative;
+}
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  box-shadow: 0 4px 16px var(--shadow-color);
+  white-space: nowrap;
+  animation: anomaly-toast-in 0.18s ease-out, anomaly-toast-out 0.2s ease-in 2.6s forwards;
+  z-index: 50;
+}
+
+.toast-success {
+  background: var(--status-success-strong);
+  color: #fff;
+}
+
+@keyframes anomaly-toast-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 6px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+@keyframes anomaly-toast-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
 }

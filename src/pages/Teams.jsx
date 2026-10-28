@@ -42,7 +42,14 @@ function TeamList() {
 
   return (
     <div className="teams-page">
-      <h1>Teams</h1>
+      <div className="teams-page-header">
+        <h1>Teams</h1>
+        <span className="teams-count">
+          {query
+            ? `${filteredTeams.length} of ${teams.length}`
+            : `${teams.length} team${teams.length === 1 ? "" : "s"}`}
+        </span>
+      </div>
 
       <input
         className="team-search"

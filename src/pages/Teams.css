@@ -296,3 +296,22 @@
 .violation-entry button {
   margin-left: auto;
 }
+
+.teams-page-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.teams-page-header h1 {
+  margin: 0;
+}
+
+.teams-count {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-faint);
+  white-space: nowrap;
+}

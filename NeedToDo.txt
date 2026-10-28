@@ -1,9 +1,5 @@
 Need to do:
-- be able to delete a violation 
-- click on violation list to see which teams have broken the rule the most
-- export to csv of all the voliations that have been broken
-- have number of teams also on the teams page
-- add notes to teams even if they pass inspection for like if they are close to the height limit
+
 
 
 Add:
